@@ -8,9 +8,9 @@ class Histogram;
 /* experimental support for Image Watch extension in Visual Studio 2013;
  * may be commented when compiling under QT Creator;
  */
-//#if _MSC_VER == 1800 && _DEBUG
-//#include <QtGui/private/qimage_p.h>
-//#endif
+#if _MSC_VER == 1800 && _DEBUG
+#include <QtGui/private/qimage_p.h>
+#endif
 
 /**
   * This is a PNM format extension for the QImage class of Qt
