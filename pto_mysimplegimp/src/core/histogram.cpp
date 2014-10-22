@@ -24,15 +24,87 @@ Histogram::~Histogram()
 
 void Histogram::generate(QImage* image)
 {
-    qDebug() << Q_FUNC_INFO << "Not implemented yet!";
+	int width = image->width();
+	int height = image->height();
+
+	if (image->format() == QImage::Format_Indexed8)
+	{
+		for (int x = 0; x<width; x++)
+		{
+			for (int y = 0; y<height; y++)
+			{
+				QRgb pixel = image->pixel(x, y);
+				QHash<int, int>::iterator iterator;
+
+				// L channel
+				int r = qRed(pixel);    // Get the 0-255 value of the R channel
+				int g = qGreen(pixel);  // Get the 0-255 value of the G channel
+				int b = qBlue(pixel);   // Get the 0-255 value of the B channel
+				int grayscale = qGray(r, g, b);
+				iterator = L->find(grayscale);
+				if (iterator != L->end()) iterator.value() += 1;
+				else L->insert(grayscale, 1);
+			}
+		}
+	}
+	else
+	{
+		for (int x = 0; x<width; x++)
+		{
+			for (int y = 0; y<height; y++)
+			{
+				QRgb pixel = image->pixel(x, y);
+				QColor pixelColor = QColor(pixel);
+				QHash<int, int>::iterator iterator;
+
+				// R channel
+				iterator = R->find(pixelColor.red());
+				if (iterator != R->end()) iterator.value() += 1;
+				else R->insert(pixelColor.red(), 1);
+				// G channel
+				iterator = G->find(pixelColor.green());
+				if (iterator != G->end()) iterator.value() += 1;
+				else G->insert(pixelColor.green(), 1);
+				// B channel
+				iterator = B->find(pixelColor.blue());
+				if (iterator != B->end()) iterator.value() += 1;
+				else B->insert(pixelColor.blue(), 1);
+				// L channel
+				int r = qRed(pixel);    // Get the 0-255 value of the R channel
+				int g = qGreen(pixel);  // Get the 0-255 value of the G channel
+				int b = qBlue(pixel);   // Get the 0-255 value of the B channel
+				int grayscale = qGray(r, g, b);
+				iterator = L->find(grayscale);
+				if (iterator != L->end()) iterator.value() += 1;
+				else L->insert(grayscale, 1);
+			}
+		}
+	}
 }
 
 /** Returns the maximal value of the histogram in the given channel */
 int Histogram::maximumValue(Channel selectedChannel = RGB)
 {
-    qDebug() << Q_FUNC_INFO << "Not implemented yet!";
+	QHash<int, int>* channel = Histogram::get(selectedChannel);
+	QHash<int, int>::const_iterator iterator;
+	int maximumValue = 0;
+	if (selectedChannel == RGB)
+	{
+		maximumValue = Histogram::maximumValue(RChannel);
+		int temp = Histogram::maximumValue(GChannel);
+		if (temp > maximumValue) maximumValue = temp;
+		temp = Histogram::maximumValue(BChannel);
+		if (temp > maximumValue) maximumValue = temp;
+	}
+	else
+	{
+		for (iterator = channel->begin(); iterator != channel->end(); iterator++)
+		{
+			if (iterator.value() > maximumValue) maximumValue = iterator.value();
+		}
+	}
 
-    return 0;
+	return maximumValue;
 }
 
 
