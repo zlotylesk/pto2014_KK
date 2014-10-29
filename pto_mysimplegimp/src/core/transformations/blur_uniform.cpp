@@ -10,11 +10,17 @@ BlurUniform::BlurUniform(PNM* img, ImageViewer* iv) :
 {
 }
 
-math::matrix<float> BlurUniform::getMask(int size, Mode)
+math::matrix<float> BlurUniform::getMask(int size, Mode m)
 {
-    math::matrix<float> mask(size, size);
-
-    qDebug() << Q_FUNC_INFO << "Not implemented yet!";
-
-    return mask;
+	//Nale¿y dokonaæ splotu obrazu z mask¹ wype³nion¹ jedynkami
+	math::matrix<float> mask(size, size);
+	for (int x = 0; x<size; x++)
+	{
+		for (int y = 0; y<size; y++)
+		{
+			mask(x, y) = 1;
+		}
+	}
+	convolute(mask, m = RepeatEdge);
+	return mask;
 }
