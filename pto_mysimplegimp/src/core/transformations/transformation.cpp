@@ -15,7 +15,7 @@ Transformation::Transformation(PNM* image, ImageViewer* iv) :
     this->image = image;
     this->supervisor = iv;
 
-    if (iv)
+	if (iv)
     {
         connect(this, SIGNAL(started()), iv, SLOT(transformationStarted()));
         connect(this, SIGNAL(finished()), iv, SLOT(transformationFinished()));
@@ -103,9 +103,15 @@ QRgb Transformation::getPixel(int x, int y, Mode mode)
  */
 QRgb Transformation::getPixelCyclic(int x, int y)
 {
-    qDebug() << Q_FUNC_INFO << "Not implemented yet!";
-
-    return image->pixel(x,y);
+	if (x < 0)
+		x = x + image->width();
+	if (y < 0)
+		y = y + image->height();
+	if (x >= image->width())
+		x = x - image->width();
+	if (y >= image->height())
+		y = y - image->height();
+	return image->pixel(x, y);
 }
 
 /**
@@ -114,9 +120,11 @@ QRgb Transformation::getPixelCyclic(int x, int y)
   */
 QRgb Transformation::getPixelNull(int x, int y)
 {
-    qDebug() << Q_FUNC_INFO << "Not implemented yet!";
-
-    return image->pixel(x,y);
+	if ((x < 0 || x >= image->width()) || (y < 0 || y >= image->height()))
+	{
+		return qRgb(0, 0, 0);
+	}
+	return image->pixel(x, y);
 }
 
 /**
@@ -126,9 +134,17 @@ QRgb Transformation::getPixelNull(int x, int y)
   */
 QRgb Transformation::getPixelRepeat(int x, int y)
 {
-    qDebug() << Q_FUNC_INFO << "Not implemented yet!";
+	if (x < 0)
+		x = 0;
+	else if (x >= image->width())
+		x = image->width() - 1;
 
-    return image->pixel(x,y);
+	if (y < 0)
+		y = 0;
+	else if (y >= image->height())
+		y = image->height() - 1;
+
+	return image->pixel(x, y);
 }
 
 /** Returns a size x size part of the image centered around (x,y) */
@@ -136,11 +152,36 @@ math::matrix<float> Transformation::getWindow(int x, int y, int size,
                                               Channel channel,
                                               Mode mode = RepeatEdge)
 {
-    math::matrix<float> window(size,size);
+	//x, y - wspó³rzêdne piksela
+	//size - wymiar macierzy
+	//channel - kana³ obrazu
+	//mode - tryb pobierania pikseli: CyclicEdge, NullEdge lub RepeatEdge
 
-    qDebug() << Q_FUNC_INFO << "Not implemented yet!";
+	math::matrix<float> window(size, size);
 
-    return window;
+	int xstart = x - (size - 1) / 2;
+	int ystart = y - (size - 1) / 2;
+
+	for (int xx = 0; xx < size; xx++)
+	{
+		for (int yy = 0; yy < size; yy++)
+		{
+			QRgb pix = getPixel(xstart + xx, ystart + yy, mode);
+			switch (channel)
+			{
+			case RChannel:
+				window(xx, yy) = qRed(pix);
+				break;
+			case GChannel:
+				window(xx, yy) = qGreen(pix);
+				break;
+			case BChannel:
+				window(xx, yy) = qBlue(pix);
+				break;
+			}
+		}
+	}
+	return window;
 }
 
 ImageViewer* Transformation::getSupervisor()
