@@ -13,3 +13,5 @@ Dziennik pracy:
 05.11.2014 - Done Lab 5, remove branch develop and merge code into master (from today we use only master)
 
 13.11.2014 - Done Lab 6
+
+19.11.2014 - Done Lab 7, preparing to correct other tasks
