@@ -14,21 +14,29 @@ EdgeLaplaceOfGauss::EdgeLaplaceOfGauss(PNM* img, ImageViewer* iv) :
 
 math::matrix<float> EdgeLaplaceOfGauss::getMask(int, Mode)
 {
-    size = getParameter("size").toInt();
-    double sigma = getParameter("sigma").toDouble();
+	size = getParameter("size").toInt();
+	float sigma = getParameter("sigma").toFloat();
 
-    math::matrix<float> mask(size, size);
+	math::matrix<float> mask(size, size);
 
-    qDebug() << Q_FUNC_INFO << "Not implemented yet!";
+	for (int i = 0; i < size; i++)
+	{
+		for (int j = 0; j < size; j++)
+		{
+			int x = i - (size / 2);
+			int y = j - (size / 2);
+			mask(i, j) = getLoG(x, y, sigma);
+		}
+	}
 
-    return mask;
+	return mask;
 }
 
 float EdgeLaplaceOfGauss::getLoG(int x, int y, float s)
 {
-    qDebug() << Q_FUNC_INFO << "Not implemented yet!";
-
-    return 0;
+	float raz = (pow(x, 2) + pow(y, 2) - 2) / pow(s, 2);
+	float dwa = BlurGaussian::getGauss(x, y, s);
+	return raz * dwa;
 }
 
 int EdgeLaplaceOfGauss::getSize()
