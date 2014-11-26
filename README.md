@@ -15,3 +15,5 @@ Dziennik pracy:
 13.11.2014 - Done Lab 6
 
 19.11.2014 - Done Lab 7, preparing to correct other tasks
+
+26.11.2014 - Done Lab 8
