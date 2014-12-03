@@ -35,7 +35,41 @@ PNM* MapHorizon::transform()
 
     PNM* newImage = new PNM(width, height, QImage::Format_Indexed8);
 
-    qDebug() << Q_FUNC_INFO << "Not implemented yet!";
+	PNM* temporaryImage = MapHeight(image).transform();
+	double alpha;
+	double r;
+	double ralpha;
+	double delta;
+	int pocz, skok;
+	for (int x = 0; x < width; x++)
+	{
+		for (int y = 0; y < height; y++)
+		{
+			alpha = 0.0;
+			int currentHeight = qRed(temporaryImage->pixel(x, y));
+			pocz = x + dx;
+			for (int pocz; pocz < width && skok < height && pocz >= 0 && skok >= 0; pocz += dx, skok += dy)
+			{
+				int rayh = qRed(temporaryImage->pixel(pocz, skok));
+				if (currentHeight < rayh)
+				{
+					r = sqrt(pow(pocz - x, 2.0) + pow(skok - y, 2.0)) * scale;
+					ralpha = atan((rayh - currentHeight) / r);
+					if (ralpha > alpha){
+						alpha = ralpha;
+					}
+				}
+			}
+
+			delta = alpha - sun_alpha * 3.14 / 180.;
+			if (delta > 0){
+				newImage->setPixel(x, y, cos(delta) * 255);
+			}
+			else {
+				newImage->setPixel(x, y, 255);
+			}
+		}
+	}
 
     return newImage;
 }
