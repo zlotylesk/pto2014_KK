@@ -49,8 +49,8 @@ math::matrix<float>* EdgeSobel::rawHorizontalDetection()
 	int height = x_gradient->colno();
 	for (int w = 0; w < width; w++){
 		for (int h = 0; h < height; h++){
-			math::matrix<float> window = getWindow(w, h, 3, LChannel, RepeatEdge);
-			(*x_gradient)(w, h) = sum(join(g_x, window));
+			math::matrix<float> window = getWindow(w, h, 3, LChannel, NullEdge);
+			(*x_gradient)(w, h) = Convolution::sum(Convolution::join(g_x, window));
 		}
 	}
     return x_gradient;
@@ -62,10 +62,11 @@ math::matrix<float>* EdgeSobel::rawVerticalDetection()
 
 	int width = y_gradient->rowno();
 	int height = y_gradient->colno();
-	for (int w = 0; w < width; w++){
-		for (int h = 0; h < height; h++){
+	for (int unsigned w = 0; w < width; w++){
+		for (int unsigned h = 0; h < height; h++){
 			math::matrix<float> window = getWindow(w, h, 3, LChannel, RepeatEdge);
-			(*y_gradient)(w, h) = sum(join(g_y, window));
+			float suma = sum(join(g_y, window));
+			(*y_gradient)(w, h) = Convolution::sum(Convolution::join(g_y, window));
 		}
 	}
     return y_gradient;
