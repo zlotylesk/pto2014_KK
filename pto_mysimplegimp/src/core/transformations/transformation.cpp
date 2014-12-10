@@ -152,32 +152,24 @@ math::matrix<float> Transformation::getWindow(int x, int y, int size,
                                               Channel channel,
                                               Mode mode = RepeatEdge)
 {
-	//x, y - wspó³rzêdne piksela
-	//size - wymiar macierzy
-	//channel - kana³ obrazu
-	//mode - tryb pobierania pikseli: CyclicEdge, NullEdge lub RepeatEdge
-
 	math::matrix<float> window(size, size);
 
-	int xstart = x - (size - 1) / 2;
-	int ystart = y - (size - 1) / 2;
+	int xstart = x - size / 2;
+	int ystart = y - size / 2;
 
 	for (int xx = 0; xx < size; xx++)
 	{
 		for (int yy = 0; yy < size; yy++)
 		{
 			QRgb pix = getPixel(xstart + xx, ystart + yy, mode);
-			switch (channel)
-			{
-			case RChannel:
+			if (channel == RChannel) {
 				window(xx, yy) = qRed(pix);
-				break;
-			case GChannel:
+			}
+			else if (channel == GChannel) {
 				window(xx, yy) = qGreen(pix);
-				break;
-			case BChannel:
+			}
+			else {
 				window(xx, yy) = qBlue(pix);
-				break;
 			}
 		}
 	}
