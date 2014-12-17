@@ -23,3 +23,5 @@ Dziennik pracy:
 11.12.2014 - Fix Lab 9
 
 11.12.2014 - Done Lab 10
+
+18.12.2014 - Done Lab 11
