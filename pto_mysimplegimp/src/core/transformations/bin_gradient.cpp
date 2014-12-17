@@ -17,44 +17,43 @@ PNM* BinarizationGradient::transform()
 
     PNM* newImage = new PNM(width, height, QImage::Format_Mono);
 
-	int up = 0;
-	int down = 0;
-	int grw = 0;
-	int grh = 0;
-	int gr = 0;
-	int threshold = 0;
-
-	for (int w = 0; w < width; w++)
+	Mode mode = RepeatEdge;
+	int licz = 0, mian = 0;
+	for (int x = 0; x < width; x++)
 	{
-		for (int h = 0; h < height; h++)
+		for (int y = 0; y < height; y++)
 		{
-
-			QRgb pixel0 = image->pixel(w - 1, h);
-			QRgb pixel1 = image->pixel(w + 1, h);
-			grw = qGray(pixel1) - qGray(pixel0);
-
-			pixel0 = image->pixel(w, h - 1);
-			pixel1 = image->pixel(w, h + 1);
-			grh = qGray(pixel1) - qGray(pixel0);
-
-			if (grw >= grh){
-				gr = grw;
+			int value_pixel, G, Gx, Gy;
+			QRgb pixel = getPixel(x, y, mode);
+			value_pixel = qGray(pixel);
+			Gx = qGray(this->getPixel(x + 1, y, mode)) - qGray(this->getPixel(x - 1, y, mode));
+			Gy = qGray(this->getPixel(x, y + 1, mode)) - qGray(this->getPixel(x, y - 1, mode));
+			if (Gx > Gy) {
+				G = Gx;
 			}
-			else gr = grh;
-			QRgb pixel = image->pixel(w, h);
-			up += qGray(pixel) * gr;
-			down += gr;
-			threshold = up / down;
-
-			if (qGray(pixel) >= threshold){
-				newImage->setPixel(w, h, Qt::color1);
+			else{
+				G = Gy;
 			}
-			else 
-				newImage->setPixel(w, h, Qt::color0);
+			licz += value_pixel * G;
+			mian += G;
 		}
 	}
-
-    qDebug() << Q_FUNC_INFO << "Not implemented yet!";
+	int threshold = licz / mian;
+	
+	for (int x = 0; x < width; x++)
+	{
+		for (int y = 0; y < height; y++)
+		{
+			QRgb pixel = image->pixel(x, y);
+			int value_pixel = qGray(pixel);
+			if (value_pixel < threshold){
+				newImage->setPixel(x, y, 0);
+			}
+			else{
+				newImage->setPixel(x, y, 1);
+			}
+		}
+	}
 
     return newImage;
 }
