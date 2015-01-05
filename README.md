@@ -25,3 +25,5 @@ Dziennik pracy:
 11.12.2014 - Done Lab 10
 
 18.12.2014 - Done Lab 11
+
+05.12.2014 - Done Lab 12
