@@ -16,10 +16,10 @@ CornerHarris::CornerHarris(PNM* img, ImageViewer* iv) :
 
 PNM* CornerHarris::transform()
 {
-    int    threshold    = getParameter("threshold").toInt();
-    double sigma        = getParameter("sigma").toDouble(),
-           sigma_weight = getParameter("sigma_weight").toDouble(),
-           k_param      = getParameter("k").toDouble();
+	int    threshold = 30000000;
+	double sigma = 1.0;
+	double sigma_weight = 0.78;
+	double k_param = 0.05;
 
     int width  = image->width(),
         height = image->height();
